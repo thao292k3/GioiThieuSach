@@ -8,7 +8,7 @@
             <!-- Simple Datatable start -->
             <div class="card-box mb-30">
                 <div class="d-flex justify-content-between align-items-center pd-20">
-                    <h4 class="text-blue h4">Category Manager</h4>
+                    <h4 class="text-blue h4">Contact Manager</h4>
                     <a href="{{ route('category.create') }}" class="btn btn-warning btn-sm">
                         <i class="fa fa-plus mr-1"></i>Add New
                     </a>
@@ -33,7 +33,7 @@
                                 <th width="25%">Message</th>
                                 <th width="20%">Status</th>
                                 <th width="20%">Created</th>
-                                <th width="10%">Actions</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -52,8 +52,8 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                             <a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-                                            <a class="dropdown-item" href="{{ route('category.edit', $model->id) }}"><i class="dw dw-edit2"></i> Edit</a>
-                                            <form method="post" action="{{ route('category.destroy', $model->id) }}" style="display: inline;">
+                                            <a class="dropdown-item" href="{{ route('contact.edit', $model->contact_id) }}"><i class="dw dw-edit2"></i> Edit</a>
+                                            <form method="post" action="{{ route('contact.destroy', $model->contact_id) }}" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="dropdown-item" type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">

@@ -12,7 +12,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $data = Contact::orderBy('id', 'asc')->paginate(6);
+        $data = Contact::orderBy('contact_id', 'asc')->paginate(6);
 
         return view('contact.index', compact('data'));
     }

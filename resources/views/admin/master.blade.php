@@ -24,6 +24,18 @@
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
 
+    <script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
+                "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/",
+                "ckeditor5-premium-features": "https://cdn.ckeditor.com/ckeditor5-premium-features/43.3.1/ckeditor5-premium-features.js",
+                "ckeditor5-premium-features/": "https://cdn.ckeditor.com/ckeditor5-premium-features/43.3.1/"
+            }
+        }
+    </script>
+    <script type="module" src="{{ URL::asset('assets/vendor/ckeditor5.js') }}"></script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
     <script>
@@ -44,7 +56,6 @@
             });
         });
     </script>
-
 
 
     @yield('link')
@@ -166,13 +177,13 @@
                         <span class="user-icon">
                             <img src="vendors/images/photo1.jpg" alt="">
                         </span>
-                        <span class="user-name">Ross C. Lopez</span>
+                        <span class="user-name">{{auth()->user()->name}}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
                         <a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
-                        <a class="dropdown-item" href="login.html"><i class="dw dw-logout"></i> Log Out</a>
+                        <a class="dropdown-item" href="{{route('admin.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
                     </div>
                 </div>
             </div>
@@ -300,40 +311,32 @@
                         </a>
                         <ul class="submenu">
                             <li><a href="{{route('contact.index')}}">List Contact</a></li>
-                            <li><a href="{{route('contact.create')}}">Add New Contact</a></li>
+
                         </ul>
                     </li>
+
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon dw dw-apartment"></span><span class="mtext"> UI Elements </span>
+                            <span class="micon dw dw-paint-brush"></span><span class="mtext">Blog Mannager</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="ui-buttons.html">Buttons</a></li>
-                            <li><a href="ui-cards.html">Cards</a></li>
-                            <li><a href="ui-cards-hover.html">Cards Hover</a></li>
-                            <li><a href="ui-modals.html">Modals</a></li>
-                            <li><a href="ui-tabs.html">Tabs</a></li>
-                            <li><a href="ui-tooltip-popover.html">Tooltip &amp; Popover</a></li>
-                            <li><a href="ui-sweet-alert.html">Sweet Alert</a></li>
-                            <li><a href="ui-notification.html">Notification</a></li>
-                            <li><a href="ui-timeline.html">Timeline</a></li>
-                            <li><a href="ui-progressbar.html">Progressbar</a></li>
-                            <li><a href="ui-typography.html">Typography</a></li>
-                            <li><a href="ui-list-group.html">List group</a></li>
-                            <li><a href="ui-range-slider.html">Range slider</a></li>
-                            <li><a href="ui-carousel.html">Carousel</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon dw dw-paint-brush"></span><span class="mtext">Icons</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="font-awesome.html">FontAwesome Icons</a></li>
-                            <li><a href="foundation.html">Foundation Icons</a></li>
-                            <li><a href="ionicons.html">Ionicons Icons</a></li>
+                            <li><a href="{{route('blog.index')}}">List Blog</a></li>
+                            <li><a href="{{route('blog.create')}}">Add new blog</a></li>
+                            <li><a href="">Edit blog</a></li>
                             <li><a href="themify.html">Themify Icons</a></li>
                             <li><a href="custom-icon.html">Custom Icons</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon dw dw-apartment"></span><span class="mtext">Usre Mannager </span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{route('user.index')}}">List user</a></li>
+                            <li><a href="{{route('user.create')}}">Add new user</a></li>
+                            <li><a href="ui-cards-hover.html">Cards Hover</a></li>
+
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -455,6 +458,7 @@
     <div class="mobile-menu-overlay"></div>
 
     @yield('body')
+
     <!-- Hiển thị thông báo thành công -->
 
     <!-- js -->
@@ -469,6 +473,7 @@
     <script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
     <script src="vendors/scripts/dashboard.js"></script>
     @yield('script')
+    @stack('scripts')
 </body>
 
 </html>

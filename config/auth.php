@@ -40,6 +40,17 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+
+        'account' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins', // Bạn có thể tạo provider riêng cho quản trị viên
+        ],
     ],
 
     /*
@@ -64,6 +75,20 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
+
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+
+
+
 
         // 'users' => [
         //     'driver' => 'database',

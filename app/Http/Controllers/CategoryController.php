@@ -12,7 +12,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data = Category::orderBy('id', 'asc')->paginate(6);
+        $data = Category::orderBy('category_id', 'asc')->paginate(6);
 
         return view('category.index', compact('data'));
     }
@@ -49,11 +49,11 @@ class CategoryController extends Controller
             'name' => $request->name,
             'status' => $request->status,
             'description' => $request->description,
+            'parent_id' => $request->parent_id ?? null,
         ]);
 
         return redirect()->route('category.index')->with('success', 'Thể loại sách đã được thêm thành công!');
     }
-
 
     /**
      * Display the specified resource.
@@ -66,9 +66,9 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit($category_id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::findOrFail($category_id);
         return view('category.edit', compact('category'));
     }
 
@@ -77,10 +77,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        // Xác định quy tắc kiểm tra đầu vào
         $rules = [
             'name' => 'required|string|max:255',
-            'status' => 'required|in:0,1', // 0 hoặc 1 cho draft hoặc published
+            'status' => 'required|in:0,1',
             'description' => 'nullable|string|max:255',
         ];
 
@@ -90,38 +89,29 @@ class CategoryController extends Controller
             'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
         ];
 
-        // Kiểm tra dữ liệu đầu vào
         $request->validate($rules, $messages);
 
-        // Cập nhật thông tin thể loại sách trong cơ sở dữ liệu
         $category->update([
             'name' => $request->name,
             'status' => $request->status,
             'description' => $request->description,
         ]);
 
-        // Chuyển hướng với thông báo thành công
         return redirect()->route('category.index')->with('success', 'Thể loại sách đã được cập nhật thành công!');
     }
-
 
     /**
      * Remove the specified resource from storage.
      */
-
-
-    public function destroy($id)
+    public function destroy($category_id)
     {
-        // Tìm đối tượng category theo ID
-        $category = Category::findOrFail($id);
+        $category = Category::findOrFail($category_id);
 
-        // Kiểm tra nếu category không có liên kết với sách (books)
         if ($category->books()->count() == 0) {
-            $category->delete(); // Xóa category nếu không có sách liên quan
+            $category->delete();
             return redirect()->route('category.index')->with('success', 'Category deleted successfully!');
         }
 
-        // Trả về nếu category có sách liên kết
         return redirect()->route('category.index')->with('error', 'Category cannot be deleted because it has books.');
     }
 }

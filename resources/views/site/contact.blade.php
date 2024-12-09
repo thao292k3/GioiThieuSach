@@ -6,61 +6,12 @@
 
 @section('body')
 
-<!-- Header Section End -->
 
-<!-- Hero Section Begin -->
-<section class="hero hero-normal">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="hero__categories">
-                    <div class="hero__categories__all">
-                        <i class="fa fa-bars"></i>
-                        <span>All departments</span>
-                    </div>
-                    <ul>
-                        <li><a href="#">Fresh Meat</a></li>
-                        <li><a href="#">Vegetables</a></li>
-                        <li><a href="#">Fruit & Nut Gifts</a></li>
-                        <li><a href="#">Fresh Berries</a></li>
-                        <li><a href="#">Ocean Foods</a></li>
-                        <li><a href="#">Butter & Eggs</a></li>
-                        <li><a href="#">Fastfood</a></li>
-                        <li><a href="#">Fresh Onion</a></li>
-                        <li><a href="#">Papayaya & Crisps</a></li>
-                        <li><a href="#">Oatmeal</a></li>
-                        <li><a href="#">Fresh Bananas</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <div class="hero__search">
-                    <div class="hero__search__form">
-                        <form action="#">
-                            <div class="hero__search__categories">
-                                All Categories
-                                <span class="arrow_carrot-down"></span>
-                            </div>
-                            <input type="text" placeholder="What do yo u need?">
-                            <button type="submit" class="site-btn">SEARCH</button>
-                        </form>
-                    </div>
-                    <div class="hero__search__phone">
-                        <div class="hero__search__phone__icon">
-                            <i class="fa fa-phone"></i>
-                        </div>
-                        <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5>
-                            <span>support 24/7 time</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
     </div>
-</section>
-<!-- Hero Section End -->
-
+@endif
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
     <div class="container">
@@ -87,14 +38,14 @@
                 <div class="contact__widget">
                     <span class="icon_phone"></span>
                     <h4>Phone</h4>
-                    <p>+01-3-8888-6868</p>
+                    <p>0968290245</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 text-center">
                 <div class="contact__widget">
                     <span class="icon_pin_alt"></span>
                     <h4>Address</h4>
-                    <p>60-49 Road 11378 New York</p>
+                    <p>Phường Bến Thủy - Tp.Vinh - Nghệ An </p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 text-center">
@@ -108,7 +59,7 @@
                 <div class="contact__widget">
                     <span class="icon_mail_alt"></span>
                     <h4>Email</h4>
-                    <p>hello@colorlib.com</p>
+                    <p>pp6686336@gmail.com</p>
                 </div>
             </div>
         </div>
@@ -126,8 +77,8 @@
         <div class="inside-widget">
             <h4>New York</h4>
             <ul>
-                <li>Phone: +12-345-6789</li>
-                <li>Add: 16 Creek Ave. Farmingdale, NY</li>
+                <li>Phone: 0968290245</li>
+                <li>Add: </li>
             </ul>
         </div>
     </div>
@@ -135,7 +86,7 @@
 <!-- Map End -->
 
 <!-- Contact Form Begin -->
-<div class="contact-form spad">
+<div class="contact-form spad"> 
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -144,22 +95,31 @@
                 </div>
             </div>
         </div>
-        <form action="#">
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <input type="text" placeholder="Your name">
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <input type="text" placeholder="Your Email">
-                </div>
-                <div class="col-lg-12 text-center">
-                    <textarea placeholder="Your message"></textarea>
-                    <button type="submit" class="site-btn">SEND MESSAGE</button>
-                </div>
-            </div>
-        </form>
+        @if (session('success'))
+        <div style="color: green; margin-bottom: 15px;">
+            {{ session('success') }}
+        </div>
+    @endif
+    
+    <form action="" method="post">
+        @csrf
+        <label for="name">Tên:</label>
+        <input type="text" name="name" id="name" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+        
+        <label for="message">Nội dung:</label>
+        <textarea name="message" id="message" rows="5" required></textarea>
+        
+        <button type="submit">Gửi liên hệ</button>
+    </form>
+    
+
+
     </div>
 </div>
+
 <!-- Contact Form End -->
 
 

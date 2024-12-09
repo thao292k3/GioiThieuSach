@@ -1,63 +1,8 @@
 @extends('site.master')
 
-@section('title','Trang Bai Viet')
-
-
+@section('title', 'Trang Bai Viet')
 
 @section('body')
-
-<!-- Hero Section Begin -->
-<section class="hero hero-normal">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="hero__categories">
-                    <div class="hero__categories__all">
-                        <i class="fa fa-bars"></i>
-                        <span>All departments</span>
-                    </div>
-                    <ul>
-                        <li><a href="#">Fresh Meat</a></li>
-                        <li><a href="#">Vegetables</a></li>
-                        <li><a href="#">Fruit & Nut Gifts</a></li>
-                        <li><a href="#">Fresh Berries</a></li>
-                        <li><a href="#">Ocean Foods</a></li>
-                        <li><a href="#">Butter & Eggs</a></li>
-                        <li><a href="#">Fastfood</a></li>
-                        <li><a href="#">Fresh Onion</a></li>
-                        <li><a href="#">Papayaya & Crisps</a></li>
-                        <li><a href="#">Oatmeal</a></li>
-                        <li><a href="#">Fresh Bananas</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <div class="hero__search">
-                    <div class="hero__search__form">
-                        <form action="#">
-                            <div class="hero__search__categories">
-                                All Categories
-                                <span class="arrow_carrot-down"></span>
-                            </div>
-                            <input type="text" placeholder="What do yo u need?">
-                            <button type="submit" class="site-btn">SEARCH</button>
-                        </form>
-                    </div>
-                    <div class="hero__search__phone">
-                        <div class="hero__search__phone__icon">
-                            <i class="fa fa-phone"></i>
-                        </div>
-                        <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5>
-                            <span>support 24/7 time</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Hero Section End -->
 
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
@@ -91,178 +36,111 @@
                     </div>
                     <div class="blog__sidebar__item">
                         <h4>Categories</h4>
-                        <ul>
-                            <li><a href="#">All</a></li>
-                            <li><a href="#">Beauty (20)</a></li>
-                            <li><a href="#">Food (5)</a></li>
-                            <li><a href="#">Life Style (9)</a></li>
-                            <li><a href="#">Travel (10)</a></li>
+                        <ul id="category-list">
+                            @foreach($limitedCategories as $item)
+                                <li><a href="#">{{ $item->name }}</a></li>
+                            @endforeach
                         </ul>
+                        @if($data->count() > 7)
+                            <a href="javascript:void(0);" id="see-more-btn" style="color: blue; text-decoration: underline;">See more</a>
+                        @endif
+                        <a href="javascript:void(0);" id="go-back-btn" style="color: red; text-decoration: underline; display: none;">Go back</a>
                     </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const data = @json($data); // Tất cả thể loại từ server
+                            const categoryList = document.getElementById('category-list');
+                            const seeMoreBtn = document.getElementById('see-more-btn');
+                            const goBackBtn = document.getElementById('go-back-btn');
+                    
+                            // Lưu trạng thái danh sách ban đầu
+                            const initialCategories = data.slice(0, 7);
+                    
+                            if (seeMoreBtn) {
+                                seeMoreBtn.addEventListener('click', function () {
+                                    // Hiển thị danh sách đầy đủ
+                                    data.slice(7).forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.innerHTML = `<a href="#">${item.name}</a>`;
+                                        categoryList.appendChild(li);
+                                    });
+                    
+                                    // Ẩn "See more" và hiện "Go back"
+                                    this.style.display = 'none';
+                                    goBackBtn.style.display = 'inline';
+                                });
+                            }
+                    
+                            if (goBackBtn) {
+                                goBackBtn.addEventListener('click', function () {
+                                    // Xóa danh sách hiện tại và phục hồi danh sách ban đầu
+                                    categoryList.innerHTML = '';
+                                    initialCategories.forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.innerHTML = `<a href="#">${item.name}</a>`;
+                                        categoryList.appendChild(li);
+                                    });
+                    
+                                    // Hiện "See more" và ẩn "Go back"
+                                    seeMoreBtn.style.display = 'inline';
+                                    this.style.display = 'none';
+                                });
+                            }
+                        });
+                    </script>
+
                     <div class="blog__sidebar__item">
                         <h4>Recent News</h4>
                         <div class="blog__sidebar__recent">
-                            <a href="#" class="blog__sidebar__recent__item">
-                                <div class="blog__sidebar__recent__item__pic">
-                                    <img src="img/blog/sidebar/sr-1.jpg" alt="">
-                                </div>
-                                <div class="blog__sidebar__recent__item__text">
-                                    <h6>09 Kinds Of Vegetables<br /> Protect The Liver</h6>
-                                    <span>MAR 05, 2019</span>
-                                </div>
-                            </a>
-                            <a href="#" class="blog__sidebar__recent__item">
-                                <div class="blog__sidebar__recent__item__pic">
-                                    <img src="img/blog/sidebar/sr-2.jpg" alt="">
-                                </div>
-                                <div class="blog__sidebar__recent__item__text">
-                                    <h6>Tips You To Balance<br /> Nutrition Meal Day</h6>
-                                    <span>MAR 05, 2019</span>
-                                </div>
-                            </a>
-                            <a href="#" class="blog__sidebar__recent__item">
-                                <div class="blog__sidebar__recent__item__pic">
-                                    <img src="img/blog/sidebar/sr-3.jpg" alt="">
-                                </div>
-                                <div class="blog__sidebar__recent__item__text">
-                                    <h6>4 Principles Help You Lose <br />Weight With Vegetables</h6>
-                                    <span>MAR 05, 2019</span>
-                                </div>
-                            </a>
+                            @foreach($recentBlogs as $blog)
+                                <a href="{{ route('blogdetail', ['id' => $blog->id]) }}" class="blog__sidebar__recent__item">
+                                    <div class="blog__sidebar__recent__item__pic">
+                                        <img src="{{ asset($blog->image_path) }}" alt="{{ $blog->title }}">
+                                    </div>
+                                    <div class="blog__sidebar__recent__item__text">
+                                        <h6>{{ Str::limit($blog->title, 40) }}</h6>
+                                        <span>{{ $blog->created_at->format('M d, Y') }}</span>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
+
                     <div class="blog__sidebar__item">
                         <h4>Search By</h4>
                         <div class="blog__sidebar__item__tags">
-                            <a href="#">Apple</a>
-                            <a href="#">Beauty</a>
-                            <a href="#">Vegetables</a>
-                            <a href="#">Fruit</a>
-                            <a href="#">Healthy Food</a>
-                            <a href="#">Lifestyle</a>
+                            @foreach($limitedCategories as $item)
+                                <a href="#">{{ $item->name }}</a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-8 col-md-7">
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-2.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">6 ways to prepare breakfast for 30</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                    @foreach($blogs as $item)
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="blog__item">
+                                <div class="blog__item__pic">
+                                    <img src="{{ asset($item->image_path) }}" alt="{{ $item->title }}">
+                                </div>
+                                <div class="blog__item__text">
+                                    <h3>{{ $item->title }}</h3>
+                                    <p>{{ Str::limit($item->content, 100, '...') }}</p>
+                                    <a href="{{ route('blogs.show', $item->blog_id) }}" class="btn btn-primary">Read More</a>
+
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-3.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">Visit the clean farm in the US</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-1.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-4.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-4.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">The Moment You Need To Remove Garlic From The Menu</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="img/blog/blog-6.jpg" alt="">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                                <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                    quaerat </p>
-                                <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="product__pagination blog__pagination">
-                            <a href="#">1</a>
-                            <a href="#">2</a>
-                            <a href="#">3</a>
-                            <a href="#"><i class="fa fa-long-arrow-right"></i></a>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
+                {{ $blogs->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>
 </section>
 <!-- Blog Section End -->
 
-
-
-@stop()
+@stop

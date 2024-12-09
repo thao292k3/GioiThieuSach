@@ -1,3 +1,6 @@
+
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 jQuery(window).on("load",function() {
 	"use strict";
 	// bootstrap wysihtml5
@@ -337,4 +340,15 @@ function CopyToClipboard(value, showNotification, notificationText) {
     // other browser
     return false;
 })();
+
+document.addEventListener("DOMContentLoaded", function() {
+    ClassicEditor
+        .create(document.querySelector('#description'))
+        .catch(error => {
+            console.error(error);
+        });
+});
+
+
+
 

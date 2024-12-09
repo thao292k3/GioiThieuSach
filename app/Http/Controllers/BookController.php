@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
@@ -13,7 +14,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        $data = Book::orderBy('id', 'asc')->paginate(7);
+        $data = Book::orderBy('book_id', 'asc')->paginate(7);
         return view('book.index', compact('data'));
     }
 
@@ -26,7 +27,6 @@ class BookController extends Controller
         return view('book.create', compact('cats'));
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -36,11 +36,13 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string',
             'publisher' => 'required|string',
-            'isbn' => 'required|string|unique:books',
+            'published_date' => 'required|date',
+            'isbn' => 'required|string|unique:books,isbn',
             'price' => 'required|numeric|min:0',
             'description' => 'required|string',
-            'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
-            'status' => 'required|in:published,draft', // Giả sử trạng thái chỉ có 2 giá trị
+            'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => ["required", Rule::in(0, 1)],
+            'category_id' => 'required|exists:categories,category_id',
         ];
 
         $messages = [
@@ -55,50 +57,36 @@ class BookController extends Controller
             'cover_image.image' => 'Cover image must be an image file.',
         ];
 
-        $request->validate($rules, $messages);
+        $validatedData = $request->validate($rules, $messages);
 
-        // Collect validated data
-        $data = $request->only([
-            'title',
-            'author',
-            'publisher',
-            'published_date',
-            'isbn',
-            'price',
-            'description',
-            'status',
-            'category_id',
-            'cover_image'
-        ]);
+        // Stock as boolean (if checked, it will be 1)
+        $validatedData['stock'] = $request->has('stock') ? 1 : 0;
 
-        // Chuyển đổi 'status' thành số (1 = published, 0 = draft)
-        $data['status'] = $request->input('status') == 'published' ? 1 : 0;
-
-        // Xử lý tải lên hình ảnh nếu có
+        // Handle cover image upload
         if ($request->hasFile('cover_image')) {
-            $imagePath = $request->file('cover_image')->store('cover_images', 'public');
-            $data['cover_image'] = $imagePath;
-
-            if (Book::create($data)) {
-                return redirect()->route('book.index');
-            }
-            return redirect()->route('book.index');
+            $imagePath = $request->file('cover_image')->storeAs('uploads', $request->file('cover_image')->getClientOriginalName(), 'public');
+            $validatedData['cover_image'] = "storage/uploads/" . $request->file('cover_image')->getClientOriginalName();
         }
 
-        // Lưu sản phẩm vào cơ sở dữ liệu
-        Book::create($data);
+        if ($request->hasFile('pdf_file')) {
+            $imagePath = $request->file('pdf_file')->storeAs('uploads', $request->file('pdf_file')->getClientOriginalName(), 'public');
+            $validatedData['pdf_file'] = "storage/uploads/" . $request->file('pdf_file')->getClientOriginalName();
+        }
+
+        // Create the book
+        Book::create($validatedData);
 
         return redirect()->route('book.index')->with('success', 'Book created successfully!');
     }
 
-
-
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show($book_id)
     {
-        //
+        $book = Book::with('cover_images')->findOrFail($book_id);
+
+        return view('book.show', compact('book'));
     }
 
     /**
@@ -120,36 +108,43 @@ class BookController extends Controller
             'author' => 'required|string|max:255',
             'publisher' => 'required|string|max:255',
             'published_date' => 'nullable|date',
-            'isbn' => 'required|string|unique:books,isbn,' . $book->id,
+            'isbn' => 'required|string|max:100|unique:books,isbn,' . $book->book_id . ',book_id',
             'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0|lt:price',
             'description' => 'required|string',
-            'status' => 'required|in:1,0',
-            'category_id' => 'required|exists:categories,id',
+            'status' => ["required", Rule::in(0, 1)],
+            'category_id' => 'required|exists:categories,category_id',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'pdf_file' => 'nullable|file|mimes:pdf|max:5120',
+            'stock' => 'nullable|boolean',
         ]);
 
-        // Xử lý ảnh bìa (nếu có)
+        // Handle stock as boolean
+        $validatedData['stock'] = $request->has('stock') ? 1 : 0;
+        // Handle cover image upload if present
         if ($request->hasFile('cover_image')) {
-            $imagePath = $request->file('cover_image')->store('cover_images', 'public');
-            $validatedData['cover_image'] = $imagePath;
+            $request->file('cover_image')->storeAs("uploads", $request->file('cover_image')->getClientOriginalName(), 'public');
+            $validatedData["cover_image"] = "storage/uploads/" . $request->file('cover_image')->getClientOriginalName();
         }
 
-        // Cập nhật sách
-        $book->update($validatedData);
-        //session()->flash('success', 'Sửa sách thành công');
+        // Handle PDF file upload if present
+        if ($request->hasFile('pdf_file')) {
+            $pdfPath = $request->file('pdf_file')->storeAs("uploads", $request->file('pdf_file')->getClientOriginalName(), 'public');
+            $validatedData["pdf_file"] = "storage/uploads/" . $request->file('pdf_file')->getClientOriginalName();
+        }
 
-        return redirect()->route('book.index')->with('success', 'Sách đã được cập nhật thành công.');
+        // Update the book
+        Book::where("book_id", $book->book_id)->update($validatedData);
+
+        return redirect()->route('book.index')->with('success', 'Book updated successfully!');
     }
-
-
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Book $book)
     {
-        $book->delete(); // Xóa bản ghi
+        $book->delete(); // Delete the book record
 
         return redirect()->route('book.index')->with('success', 'Book deleted successfully!');
     }

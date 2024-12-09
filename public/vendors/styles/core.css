@@ -493,6 +493,28 @@ pre code {
     margin-top: 80px; 
   }
 
+  .row-4 {
+    display: flex; /* Sử dụng chuẩn modern CSS */
+    flex-wrap: wrap; /* Cho phép các phần tử xuống dòng khi không đủ chỗ */
+    margin: 80px 20px 0 80px; /* margin: top right bottom left */
+    gap: 20px; /* Tạo khoảng cách giữa các phần tử con (thay vì margin riêng lẻ) */
+}
+
+
+  .row-5 {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: 80px; 
+    margin-top: 80px; 
+  }
+
+
+  
+
 .no-gutters {
   margin-right: 0;
   margin-left: 0; }
@@ -11639,4 +11661,6 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
   margin-bottom: 0;
   width: 100%;
   float: none; }
+
+  
   

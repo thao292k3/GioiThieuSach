@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Models\Comment;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+
+
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use PhpParser\Builder\Function_;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,8 +26,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
+        //$this->registerPolicies();
 
-        //
+        Gate::define('my-comment', function (User $user, Comment $comm) {
+
+            return $user->user_id == $comm->user_id;
+        });
     }
 }

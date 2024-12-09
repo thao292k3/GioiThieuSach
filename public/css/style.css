@@ -291,6 +291,28 @@ ol {
 }
 
 .header__top__right {
+    display: flex;
+    justify-content: flex-end; /* Canh phải */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.header__top__right a {
+    text-decoration: none; /* Xóa gạch chân */
+    color: inherit; /* Giữ màu mặc định */
+    font-size: 14px; /* Điều chỉnh kích thước chữ */
+    margin-right: 10px; /* Khoảng cách giữa các liên kết */
+}
+
+.header__top__right a:last-child {
+    margin-right: 0; /* Xóa khoảng cách cho liên kết cuối */
+}
+
+.header__top__right i {
+    font-size: 16px; /* Điều chỉnh kích thước icon */
+}
+
+
+.header__top__right {
 	text-align: right;
 	padding: 10px 0 13px;
 }
@@ -1668,7 +1690,9 @@ ol {
 }
 
 .product__details__pic__item img {
-	min-width: 100%;
+	min-width: 95%;
+	height: auto; 
+	object-fit: contain;
 }
 
 .product__details__pic__slider img {
@@ -2278,8 +2302,19 @@ ol {
 }
 
 .blog__item__pic img {
-	min-width: 100%;
+    width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của container */
+    height: 250px; /* Cố định chiều cao */
+    object-fit: cover; /* Cắt ảnh để vừa khung mà không bị biến dạng */
+    border-radius: 5px; /* Tùy chọn: thêm góc bo tròn */
 }
+
+.blog__item__pic {
+    position: relative;
+    width: 100%; /* Chiều rộng tự động điều chỉnh theo cột */
+    height: 250px; /* Đồng nhất chiều cao */
+    overflow: hidden; /* Đảm bảo phần ảnh thừa không bị lộ ra ngoài */
+}
+
 
 .blog__item__text {
 	padding-top: 25px;
@@ -3465,4 +3500,6 @@ ol {
 	.blog__details__hero__text h2 {
 		font-size: 24px;
 	}
+
+	
 }

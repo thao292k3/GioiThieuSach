@@ -2,12 +2,14 @@
 <html lang="zxx">
 
 <head>
+
+    <base href="/" />
     <meta charset="UTF-8">
     <meta name="description" content="Ogani Template">
     <meta name="keywords" content="Ogani, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ogani | Template</title>
+    <title>Trang chủ</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
@@ -21,12 +23,14 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  
+
 </head>
 
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
-        <div class="loader"></div>
     </div>
 
     <!-- Humberger Begin -->
@@ -40,36 +44,25 @@
                 <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
                 <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
             </ul>
-            <div class="header__cart__price">item: <span>$150.00</span></div>
+            <div class="header__cart__price"></div>
         </div>
         <div class="humberger__menu__widget">
-            <div class="header__top__right__language">
-                <img src="img/language.png" alt="">
-                <div>English</div>
-                <span class="arrow_carrot-down"></span>
-                <ul>
-                    <li><a href="#">Spanis</a></li>
-                    <li><a href="#">English</a></li>
-                </ul>
-            </div>
             <div class="header__top__right__auth">
                 <a href="#"><i class="fa fa-user"></i> Login</a>
             </div>
         </div>
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
-                <li class="active"><a href="./index.html">Home</a></li>
-                <li><a href="./shop-grid.html">Shop</a></li>
+                <li class="active"><a href="{{route('home')}}">Home</a></li>
+                <li><a href="{{route('shop')}}">Shop</a></li>
                 <li><a href="#">Pages</a>
                     <ul class="header__menu__dropdown">
-                        <li><a href="./shop-details.html">Shop Details</a></li>
-                        <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                        <li><a href="./checkout.html">Check Out</a></li>
-                        <li><a href="./blog-details.html">Blog Details</a></li>
+                        <li><a href="{{route('shopdetail')}}">Shop Details</a></li>
+                        <li><a href="{{ route('blogdetail', ['id' => 1]) }}">Blog Details</a></li>
                     </ul>
                 </li>
-                <li><a href="./blog.html">Blog</a></li>
-                <li><a href="./contact.html">Contact</a></li>
+                <li><a href="{{route('blog')}}">Blog</a></li>
+                <li><a href="{{route('contact')}}">Contact</a></li>
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -79,52 +72,13 @@
             <a href="#"><i class="fa fa-linkedin"></i></a>
             <a href="#"><i class="fa fa-pinterest-p"></i></a>
         </div>
-        <div class="humberger__menu__contact">
-            <ul>
-                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                <li>Free Shipping for all Order of $99</li>
-            </ul>
-        </div>
     </div>
     <!-- Humberger End -->
 
     <!-- Header Section Begin -->
     <header class="header">
         <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="header__top__left">
-                            <ul>
-                                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                                <li>Free Shipping for all Order of $99</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="header__top__right">
-                            <div class="header__top__right__social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                                <a href="#"><i class="fa fa-pinterest-p"></i></a>
-                            </div>
-                            <div class="header__top__right__language">
-                                <img src="img/language.png" alt="">
-                                <div>English</div>
-                                <span class="arrow_carrot-down"></span>
-                                <ul>
-                                    <li><a href="#">Spanis</a></li>
-                                    <li><a href="#">English</a></li>
-                                </ul>
-                            </div>
-                            <div class="header__top__right__auth">
-                                <a href="#"><i class="fa fa-user"></i> Login</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
         <div class="container">
             <div class="row">
@@ -140,10 +94,8 @@
                             <li><a href="{{route('shop')}}">Shop</a></li>
                             <li><a href="#">Pages</a>
                                 <ul class="header__menu__dropdown">
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                    <li><a href="{{route('shopdetail')}}">Shop Details</a></li>
+                                    <li><a href="{{ route('blogdetail', ['id' => 1]) }}">Blog Details</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{route('blog')}}">Blog</a></li>
@@ -152,14 +104,37 @@
                     </nav>
                 </div>
                 <div class="col-lg-3">
+                    @if(auth('account')->check())
                     <div class="header__cart">
-                        <ul>
-                            <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                            <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
-                        </ul>
-                        <div class="header__cart__price">item: <span>$150.00</span></div>
-                    </div>
+                       
+                            {{ dd(auth('account')->user()) }} <!-- Debug thông tin user -->
+                            <div class="dropdown">
+                                <a href="#" class=" dropdown-toggle text-dark" data-bs-toggle="dropdown"><small><i class="fa fa-home text-primary me-2"></i>{{ auth('account')->user()->name }}</small>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                    <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
+                                    <a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
+                                    <a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
+                                    <a class="dropdown-item" href="{{route('admin.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
+                                </div>
+                            </div>
+                        @else
+                            <div class="header__top__right d-flex justify-content-end align-items-center">
+                                <a href="{{ route('account.register') }}" class="me-3 d-flex align-items-center">
+                                    <i class="fa fa-user me-2"></i> Register
+                                </a>
+                                <a href="{{ route('account.login') }}" class="d-flex align-items-center">
+                                    <i class="fa fa-sign-in-alt text-primary me-2"></i> Login
+                                </a>
+                            </div>
+
+
+                        </div>
+                        @endif
+                    
                 </div>
+                
+                
             </div>
             <div class="humberger__open">
                 <i class="fa fa-bars"></i>
@@ -167,7 +142,24 @@
         </div>
     </header>
     <!-- Header Section End -->
+   
+    @if(session('yes'))
 
+    <div class="alert alert-success">
+        {{ session('yes') }}
+    </div>
+
+@endif
+
+@if(session('No'))
+
+    <div class="alert alert-danger">
+        {{ session('No') }}
+    </div>
+
+@endif
+
+  
     @yield('body')
 
     <!-- Footer Section Begin -->
@@ -180,9 +172,9 @@
                             <a href="./index.html"><img src="img/logo.png" alt=""></a>
                         </div>
                         <ul>
-                            <li>Address: 60-49 Road 11378 New York</li>
-                            <li>Phone: +65 11.188.888</li>
-                            <li>Email: hello@colorlib.com</li>
+                            <li>Đại chỉ: Phường Bến Thủy - Tp.Vinh - Nghệ An </li>
+                            <li>Phone: 0968290245</li>
+                            <li>Email: pp6686336@gamil.com</li>
                         </ul>
                     </div>
                 </div>
@@ -251,6 +243,10 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+
 
 
 

@@ -1,6 +1,8 @@
 @extends('admin.master')
 @section('title', 'Category Manager')
 @section('body')
+<script src="https://cdn.ckeditor.com/ckeditor5/35.3.1/classic/ckeditor.js"></script>
+
 <div class="main-container">
     <div class="pd-ltr-20 xs-pd-20-10">
         <div class="min-height-200px">
@@ -49,12 +51,13 @@
                                     <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                         <i class="dw dw-more"></i>
                                     </a>
-                                    <form method="post" action="{{ route('category.destroy', $model->id) }}">
+                                    <form method="post" action="{{ route('category.destroy', $model->category_id) }}">
                                         @csrf
                                         @method('DELETE') <!-- Xác định phương thức DELETE cho route destroy -->
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                            <a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-                                            <a class="dropdown-item" href="{{ route('category.edit', $model->id) }}"><i class="dw dw-edit2"></i> Edit</a>
+                                          
+                                            <a class="dropdown-item" href="{{ route('category.edit', $model->category_id) }}"><i class="dw dw-edit2"></i> Edit</a>
+
                                             <button class="dropdown-item" type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                 <i class="dw dw-delete-3"></i> Delete
                                             </button>
@@ -68,6 +71,17 @@
                             </tr>
                             @endforeach
 
+                            @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                            @endif
+
+                            @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                            @endif
 
                         </tbody>
                     </table>

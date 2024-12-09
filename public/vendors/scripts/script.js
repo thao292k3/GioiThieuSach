@@ -338,3 +338,27 @@ function CopyToClipboard(value, showNotification, notificationText) {
     return false;
 })();
 
+$(document).ready(function() {
+    $('#upload-form').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData($(this)[0]);
+
+        $.ajax({
+            url: '/upload-image',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response);   
+
+                // Xử lý khi upload thành công
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Có lỗi xảy ra khi upload file. Vui lòng thử lại.');
+            }
+        });
+    });
+});

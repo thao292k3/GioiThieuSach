@@ -1,6 +1,7 @@
 @extends('admin.master')
 
 @section('body')
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.0/classic/ckeditor.js"></script>
 
 <!-- Form Thêm Mới Thể Loại Sách -->
 <div class="container">
@@ -39,6 +40,8 @@
                     <div class="form-group">
                         <label for="description">Mô Tả</label>
                         <textarea class="form-control" name="description" id="description" rows="4" placeholder="Nhập mô tả thể loại">{{ old('description') }}</textarea>
+
+
                         @error('description')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -53,5 +56,27 @@
         </div>
     </div>
 </div>
+<!-- Đưa script CKEditor vào stack -->
+@push('scripts')
+<script>
+    ClassicEditor
+        .create(document.querySelector('description'))
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 
+@endpush
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 @endsection
