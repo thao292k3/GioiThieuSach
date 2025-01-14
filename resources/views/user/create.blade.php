@@ -1,7 +1,14 @@
 @extends('admin.master')
 @section('title', 'Category Manager')
 @section('body')
-<h1>Thêm Người Dùng</h1>
+
+<div class="container">
+    <div class="row-1">
+        <div class="col-md-9">
+            <div class="pd-20 card-box mb-30">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <h4>Thêm Người Dùng</h4>
 
 <form action="{{ route('user.store') }}" method="POST">
     @csrf

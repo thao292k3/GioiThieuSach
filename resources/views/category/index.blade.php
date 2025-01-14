@@ -3,48 +3,53 @@
 @section('body')
 <script src="https://cdn.ckeditor.com/ckeditor5/35.3.1/classic/ckeditor.js"></script>
 
+
 <div class="main-container">
+
+    @if (session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+
+@if (session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
     <div class="pd-ltr-20 xs-pd-20-10">
         <div class="min-height-200px">
-
             <!-- Simple Datatable start -->
             <div class="card-box mb-30">
                 <div class="d-flex justify-content-between align-items-center pd-20">
-                    <h4 class="text-blue h4">Category Manager</h4>
+                    <h4 class="text-blue h4">Quản lý danh mục sách</h4>
                     <a href="{{route('category.create')}}" class="btn btn-warning btn-sm"><i class="fa fa-plus mr-1"></i>Add New</a>
                 </div>
-
-
                 <div class="pb-20">
-                    <form class="form-inline mb-3" action="">
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Enter name..." style="width: 300px; margin-right: 5px;">
-                        </div>
-                        <button class="btn btn-success btn-sm"><i class="fa fa-search"></i></button>
-                    </form>
-
                     <table class="data-table table stripe hover nowrap">
                         <thead>
                             <tr>
-                                <th class="table-plus datatable-nosort">ID</th>
-                                <th>Category Name</th>
-                                <th>Description</th>
-                                <th>Created</th>
-                                <th>Status</th>
-                                <th>Total</th>
-
-
+                                <th class="table-plus datatable-nosort">STT</th>
+                                <th>Tên danh mục</th>
+                                <th>Danh mục cha</th>
+                                <th>Mô tả</th>
+                                <th>Ngày tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Số sách</th>
                             </tr>
-
                         </thead>
                         <tbody>
                             @foreach ($data as $model)
-
-                            <td>{{ $model->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $model->name }}</td>
+                            <td>{{ $model->parent_id }}</td>
                             <td>{{ \Illuminate\Support\Str::limit($model->description, 50) }}</td>
                             <td>{{ \Carbon\Carbon::parse($model->create_at)->format('d/m/Y') }}</td>
-                            <td>{{ $model->status == 0 ? 'Ẩn' : 'Hiển thị' }}</td>
+                            <td>
+                                {!! $model->status == 0 
+                                    ? "<span class='label label-success'>Hiển thị</span>" 
+                                    : "<span class='label label-danger'>Ẩn</span>" !!}
+                            </td>                            
                             <td>{{ $model->books->count()}}</td>
                             <td>
                                 <div class="dropdown">
@@ -65,34 +70,14 @@
                                     </form>
                                 </div>
                             </td>
-
-
-
                             </tr>
                             @endforeach
-
-                            @if (session('success'))
-                            <div class="alert alert-success">
-                                {{ session('success') }}
-                            </div>
-                            @endif
-
-                            @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                            @endif
-
                         </tbody>
                     </table>
                     {{$data->links('pagination::bootstrap-4')}}
-
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>
-
 @endsection

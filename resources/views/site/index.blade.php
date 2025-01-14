@@ -1,12 +1,14 @@
 @extends('site.master')
 
-
-
+@section('title','Trang chủ')
 
 @section('body')
 
+
+
 <!-- Hero Section Begin -->
 <section class="hero">
+    
     <div class="container">
         <div class="row">
       
@@ -128,7 +130,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="section-title">
-                    <h2>Sản phẩm nổi bật</h2>
+                    <h2>Sách nổi bật</h2>
                 </div>
                 <div class="featured__controls">
                     <ul class="category-list">
@@ -150,25 +152,68 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mix {{ strtolower(str_replace(' ', '-', $item->cat->name)) }}">
                     <div class="featured__item">
                         <div class="featured__item__pic set-bg" data-setbg="{{ asset($item->cover_image) }}">
+						   <ul class="featured__item__pic__hover">
+
                             <ul class="featured__item__pic__hover">
-                                <li><a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">Xem chi tiết</a></li>
+                                <li>
+                                    @if(auth()->check())
+                                        @if(auth()->user()->favorites()->where('favorites.book_id', $item->book_id)->exists()) 
+                                            <a title="Bỏ thích" onclick="return confirm('Bạn có muốn bỏ thích không?')" href="{{ route('home.favorite', $item->book_id) }}">
+                                                <i class="fas fa-heart" style="color: red;"></i>
+                                            </a>
+                                        @else
+                                            <a title="Yêu thích" href="{{ route('home.favorite', $item->book_id) }}">
+                                                <i class="far fa-heart"></i>
+                                            </a>
+                                        @endif
+                                    @else
+                                        <a title="Yêu thích" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để yêu thích sách!');">
+                                            <i class="far fa-heart"></i>
+                                        </a>
+                                    @endif
+                                </li>
+                                
+                                <li>
+                                    @if(auth()->check())
+                                        <a title="Thêm vào giỏ hàng" href="{{ route('cart.add', $item->book_id) }}">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    @else
+                                        <a title="Thêm vào giỏ hàng" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để thêm sách vào giỏ hàng!');">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    @endif
+                                </li>
+                                
+                                
+                                <li>
+                                    <a href="#"><i class="fa fa-retweet"></i></a>
+                                </li>
+                            </ul> 
                             </ul>
-                        </div>
+                        
+                            <ul class="featured__item__pic__hover">
+                                <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">Xem chi tiết</a>
+                            </ul>
+                        </div>    
+                    </div>
+                        {{-- @endif --}}
+
                         <div class="featured__item__text">
                             <p>{{ $item->cat->name }}</p>
                             <h6>{{ $item->title }}</h6>
                             <h5>{{ $item->price }}</h5>
                         </div>
-                    </div>
                 </div>
                 
-                @endforeach
+            @endforeach
             @else
                 <p>Không có sách nổi bật.</p>
             @endif
         </div>
     </div>
 </section>
+
 <style>
    document.addEventListener('DOMContentLoaded', function () {
     const categoryItems = document.querySelectorAll('.category-item');
@@ -197,111 +242,108 @@
 </style>
 <!-- Featured Section End -->
 
-<!-- Banner Begin -->
+ <!-- Banner Begin -->
 <div class="banner">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="banner__pic">
-                        <img src="img/banner/banner-1.jpg" alt="">
+                        <img src="uploads/banner2.jpg" alt="">
                     </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="banner__pic">
-                    <img src="img/banner/banner-2.jpg" alt="">
+                    <img src="uploads/banner7.jpg" alt="">
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Banner End -->
-
+<!-- Banner End --> 
 <!-- Latest Product Section Begin -->
 <section class="latest-product spad">
     <div class="container">
         <div class="row">
+            <!-- Sản phẩm mới nhất -->
             <div class="col-lg-4 col-md-6">
                 <div class="latest-product__text">
                     <h4>Sản phẩm mới nhất</h4>
                     <div class="latest-product__slider owl-carousel">
-                        <div class="latest-prdouct__slider__item">
-                            @forelse($latestBooks as $book)
-                                <a href="{{ route('book.show', $book->book_id) }}" class="latest-product__item">
+                        @forelse($latestBooks as $book)
+                            <a href="{{ route('book.show', $book->book_id) }}" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    @if(!empty($book->cover_image) && file_exists(public_path($book->cover_image)))
+                                        <img src="{{ asset($book->cover_image) }}" alt="{{ $book->title }}">
+                                    @else
+                                        <img src="{{ asset('default-image.jpg') }}" alt="No image available">
+                                    @endif
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{ $book->title }}</h6>
+                                    <span>{{ number_format($book->price, 0, ',', '.') }} VNĐ</span>
+                                </div>
+                            </a>
+                        @empty
+                            <p>Không tìm thấy sản phẩm nào.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <!-- Đánh giá hàng đầu -->
+            <div class="col-lg-4 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Đánh giá hàng đầu</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        @if($topCommentedBooks->isNotEmpty())
+                            @foreach($topCommentedBooks as $item)
+                                <div class="latest-product__item">
                                     <div class="latest-product__item__pic">
-                                        @if(!empty($book->cover_image) && file_exists(public_path($book->cover_image)))
-                                            <img src="{{ asset($book->cover_image) }}" alt="{{ $book->title }}">
-                                        @else
-                                            <img src="{{ asset('default-image.jpg') }}" alt="No image available">
-                                        @endif
+                                        <img src="{{ asset($item->cover_image) }}" alt="{{ $item->title }}">
                                     </div>
                                     <div class="latest-product__item__text">
-                                        <h6>{{ $book->title }}</h6>
-                                        <span>{{ number_format($book->price) }} VNĐ</span>
+                                        <h6>
+                                            <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">{{ $item->title }}</a>
+                                        </h6>
+                                        <span>{{ number_format($item->price, 0, ',', '.') }} VNĐ</span>
+                                        <p><strong>{{ $item->comments_count }} bình luận</strong></p>
                                     </div>
-                                </a>
-                            @empty
-                                <p>No products found.</p>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="latest-product__text">
-                    <h4>Top Rated Products</h4>
-                    <div class="latest-product__slider owl-carousel">
-                        @if($topRatedBooks->isNotEmpty())
-    @php
-        $item = $topRatedBooks->first(); // Lấy sách đầu tiên
-    @endphp
-    <div class="latest-product__item">
-        <div class="latest-product__item__pic">
-            <img src="{{ asset($item->cover_image) }}" alt="{{ $item->title }}">
-        </div>
-        <div class="latest-product__item__text">
-            <h6>{{ $item->title }}</h6>
-            <span>{{ number_format($item->price) }} VNĐ</span>
-        </div>
-    </div>
-@endif
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="latest-product__text">
-                        <h4>Review Products</h4>
-                        <div class="latest-product__slider owl-carousel">
-                            @foreach($reviewedBooks as $item)
-                                <div class="latest-product__slider__item">
-                                    <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            @if(!empty($item->cover_image) && file_exists(public_path($item->cover_image)))
-                                                <img src="{{ asset($item->cover_image) }}" alt="{{ $item->title }}">
-                                            @else
-                                                <img src="{{ asset('default-image.jpg') }}" alt="No image available">
-                                            @endif
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{ $item->title }}</h6>
-                                            <span>{{ number_format($item->price) }} VNĐ</span>
-                                        </div>
-                                    </a>
                                 </div>
                             @endforeach
-                        </div>
+                        @else
+                            <p>Chưa có sách nào được bình luận.</p>
+                        @endif
                     </div>
-                    
                 </div>
-                
+            </div>
+
+            <!-- Review Products -->
+            <div class="col-lg-4 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Review Products</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        @foreach($reviewedBooks as $item)
+                            <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    @if(!empty($item->cover_image) && file_exists(public_path($item->cover_image)))
+                                        <img src="{{ asset($item->cover_image) }}" alt="{{ $item->title }}">
+                                    @else
+                                        <img src="{{ asset('default-image.jpg') }}" alt="No image available">
+                                    @endif
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{ $item->title }}</h6>
+                                    <span>{{ number_format($item->price, 0, ',', '.') }} VNĐ</span>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Latest Product Section End -->
-
 <!-- Blog Section Begin -->
 <section class="from-blog spad">
     <div class="container">
@@ -337,4 +379,4 @@
 </section>
 <!-- Blog Section End -->
 
-@endsection
+@stop()

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactEmail;
+use App\Mail\ContactResponse;
+use App\Mail\ContactResponseMail;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Category;
@@ -12,9 +14,13 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Email;
-
+use App\Models\User;
 use App\Models\Comment;
+use App\Models\Favorite;
+use App\Models\Review;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Mailer\Mailer;
 
 class HomeController extends Controller
 {
@@ -37,15 +43,13 @@ class HomeController extends Controller
             $query->orderBy('created_at', 'desc'); // Sắp xếp review mới nhất
         }])->get();
 
-        $topRatedBooks = DB::table('books')
-            ->join('reviews', 'books.book_id', '=', 'reviews.book_id')
-            ->select('books.book_id', 'books.title', 'books.cover_image', 'books.price', DB::raw('AVG(reviews.rating) as avg_rating'))
-            ->groupBy('books.book_id', 'books.title', 'books.cover_image', 'books.price')
-            ->orderByDesc('avg_rating')
-            ->limit(1) // Lấy một sách duy nhất
+        $topCommentedBooks = Book::withCount('comments') // Đếm số lượng bình luận
+            ->having('comments_count', '>', 0) // Chỉ lấy sách có ít nhất 1 bình luận
+            ->orderBy('comments_count', 'desc') // Sắp xếp theo số lượng bình luận giảm dần
+            ->take(5) // Giới hạn 5 sách
             ->get();
 
-        return view('site.index', compact('featuredBooks', 'data', 'limitedCategories', 'latestBooks', 'blogs', 'categories', 'category', 'reviewedBooks', 'topRatedBooks'));
+        return view('site.index', compact('featuredBooks', 'data', 'limitedCategories', 'latestBooks', 'blogs', 'categories', 'category', 'reviewedBooks', 'topCommentedBooks'));
     }
 
 
@@ -139,7 +143,37 @@ class HomeController extends Controller
     {
         // Hiển thị form liên hệ
         return view('site.contact');
+        // $email = 'pp6686336@gmail.com';
+        // Mail::to($email)->send(new Mailable());
     }
+    public function storeContact(Request $request)
+    {
+        // Validate dữ liệu nhập vào
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        // Lưu dữ liệu vào bảng contact
+        Contact::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'message' => $request->message,
+        ]);
+
+        // Có thể thêm thông báo thành công
+        return redirect()->route('contact')->with('success', 'Your message has been sent successfully!');
+    }
+
+
+
+
+    public function shopingcart()
+    {
+        return view('site.shoping-cart');
+    }
+
 
     public function senMail(Request $request)
     {
@@ -155,13 +189,90 @@ class HomeController extends Controller
         return redirect()->route('contact')->with('success', 'Đã gửi liên hệ thành công.');
     }
 
+    public function respond(Request $request, $contact_id)
+    {
+        $contact = Contact::find($contact_id);
+
+        // Validate the input
+        $request->validate([
+            'response' => 'required|string',
+        ]);
+
+        // Cập nhật phản hồi vào cơ sở dữ liệu
+        $contact->response = $request->response;
+        $contact->response_date = now();
+        $contact->save();
+
+        // Gửi email phản hồi cho khách hàng
+        Mail::to($contact->email)->send(new ContactResponseMail($contact));
+
+        return redirect()->route('contact.index')->with('success', 'Response sent successfully.');
+    }
 
     public function store(Request $request)
     {
-        // Code xử lý lưu dữ liệu
+        // if (!auth()->check()) {
+        //     return redirect()->route('account.login')->with('error', 'Vui lòng đăng nhập để bình luận hoặc đánh giá.');
+        // }
+
+        // $request->validate([
+        //     'name' => 'required|string',
+        //     'email' => 'required|email',
+        //     'review' => 'required|string',
+        //     'rating' => 'required|integer|min:1|max:5',
+        // ]);
+
+        // Review::create([
+        //     'book_id' => $book_id,
+        //     'user_id' => auth()->id(), // Dùng user_id
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'review' => $request->review,
+        //     'rating' => $request->rating,
+        // ]);
+
+        // return redirect()->back()->with('success', 'Cảm ơn bạn đã đánh giá cuốn sách!');
+
+        if ($request->has('message') && !$request->has('rating')) {
+            // Xử lý lưu liên hệ
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'message' => 'required|string',
+            ]);
+
+            // Contact::create([
+            //     'name' => $request->name,
+            //     'email' => $request->email,
+            //     'message' => $request->message,
+            //     // 'status' => '1', // Gán giá trị mặc định
+            // ]);
+
+
+            // return redirect()->route('contact')->with('success', 'Cảm ơn bạn đã liên hệ!');
+        } elseif ($request->has('rating')) {
+            // Xử lý lưu đánh giá
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'review' => 'required|string',
+                'rating' => 'required|integer|min:1|max:5',
+            ]);
+
+            Review::create([
+                'book_id' => $request->book_id,
+                'user_id' => auth()->id(),
+                'name' => $request->name,
+                'email' => $request->email,
+                'review' => $request->review,
+                'rating' => $request->rating,
+            ]);
+
+            return redirect()->back()->with('success', 'Cảm ơn bạn đã đánh giá cuốn sách!');
+        } else {
+            return redirect()->back()->with('error', 'Dữ liệu không hợp lệ.');
+        }
     }
-
-
 
     public function shop()
     {
@@ -176,8 +287,6 @@ class HomeController extends Controller
         // Truyền dữ liệu sang view
         return view('site.shop', compact('saleBooks', 'limitedCategories', 'data', 'books', 'latestBooks'));
     }
-
-
 
     public function shopdetail($slug = null)
     {
@@ -194,19 +303,24 @@ class HomeController extends Controller
         // Lấy danh sách bình luận liên quan đến sách
         $comments = Comment::where('book_id', $book->book_id)->orderBy('created_at', 'desc')->get();
 
+
         $reviews = DB::table('reviews')
-            ->join('customers', 'reviews.customer_id', '=', 'customers.customer_id')
+            ->join('users', 'reviews.user_id', '=', 'users.user_id') // Dùng user_id và tham chiếu đến bảng users
             ->where('reviews.book_id', $book->book_id)
-            ->select('customers.name as customer_name', 'reviews.rating', 'reviews.review', 'reviews.created_at')
+            ->select('users.name as user_name', 'reviews.rating', 'reviews.review', 'reviews.created_at')
             ->get()
             ->map(function ($review) {
                 // Chuyển đổi 'created_at' thành đối tượng Carbon
                 $review->created_at = Carbon::parse($review->created_at);
                 return $review;
             });
+        $relatedBooks = Book::where('category_id', $book->category_id)
+            ->where('book_id', '!=', $book->book_id) // Sử dụng 'book_id' thay vì 'id'
+            ->take(4) // Giới hạn 4 sách liên quan
+            ->get();
 
         // Truyền dữ liệu sang view
-        return view('site.shopdetail', compact('book', 'books', 'limitedCategories', 'data', 'reviews', 'comments'));
+        return view('site.shopdetail', compact('book', 'books', 'limitedCategories', 'data', 'reviews', 'comments', 'relatedBooks'));
     }
 
     function showBookDetail($id)
@@ -216,8 +330,59 @@ class HomeController extends Controller
         return view('site.shopdetail', compact('book'));
     }
 
+    public function likeBlog($blog_id)
+    {
+        $blog = Blog::findOrFail($blog_id);
+
+        // Kiểm tra nếu user đã like bài viết trước đó
+        if ($blog->likes()->where('user_id', Auth::id())->exists()) {
+            return redirect()->back()->with('info', 'You have already liked this post.');
+        }
+
+        $blog->likes()->create([
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'You liked the blog!');
+    }
+
+    public function replyComment(Request $request, $comment_id)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:500',
+        ]);
+
+        $parentComment = Comment::findOrFail($comment_id);
+
+        Comment::create([
+            'book_id' => $parentComment->book_id,
+            'user_id' => Auth::id(),
+            'comment' => $request->comment,
+            'status' => 1,
+            'parent_id' => $parentComment->comment_id,
+            'created_up' => now(),
+            'updated_up' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Reply added successfully!');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id', 'comment_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id', 'comment_id');
+    }
+
     public function post_comment(Request $request, $book_id)
     {
+
+        if (!auth()->check()) {
+            return redirect()->route('account.login')->with('error', 'Vui lòng đăng nhập để bình luận.');
+        }
         // Kiểm tra sách
         $book = Book::find($book_id);
         if (!$book) {
@@ -228,6 +393,7 @@ class HomeController extends Controller
         Comment::create([
             'book_id' => $book_id,
             'user_id' => auth()->id(),
+            'blog_id' => $request->input('blog_id'), // Thêm trường blog_id
             'comment' => $request->input('comment'), // Trường comment trong form
             'status' => 1, // Trạng thái mặc định
             'created_at' => now(),
@@ -246,12 +412,40 @@ class HomeController extends Controller
         return view('site.category', compact('cat', 'books', 'data', 'limitedCategories'));
     }
 
-
-
     public function master()
     {
         $data = Category::all();
         $limitedCategories = $data->take(11);
         return view('site.master', compact('data', 'limitedCategories'));
+    }
+
+    public function favorite($book_id)
+    {
+        // Lấy user hiện tại
+        $user = Auth::user();
+
+        // Kiểm tra xem sách có tồn tại không
+        $book = Book::find($book_id);
+        if (!$book) {
+            return redirect()->back()->with('error', 'Sách không tồn tại!');
+        }
+
+        // Kiểm tra xem sách đã được yêu thích chưa
+        $favorite = Favorite::where('user_id', $user->user_id)
+            ->where('book_id', $book_id)
+            ->first();
+
+        if ($favorite) {
+            // Nếu đã yêu thích, xóa yêu thích
+            $favorite->delete();
+            return redirect()->back()->with('info', 'Bạn đã bỏ yêu thích sản phẩm!');
+        } else {
+            // Nếu chưa yêu thích, thêm vào danh sách yêu thích
+            Favorite::create([
+                'user_id' => $user->user_id,
+                'book_id' => $book_id,
+            ]);
+            return redirect()->back()->with('success', 'Bạn đã yêu thích sản phẩm!');
+        }
     }
 }

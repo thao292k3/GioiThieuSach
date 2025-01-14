@@ -121,19 +121,63 @@
                 </div>
                 <!-- Reviews Tab -->
                 <div class="tab-pane" id="tabs-3" role="tabpanel">
-                    <div class="reviews">
-                        @forelse ($reviews as $review)
-                            <div class="review">
-                                <h5>{{ $review->customer_name }}</h5>
-                                <p><strong>Rating:</strong> {{ $review->rating }} / 5</p>
-                                <p>{{ $review->review }}</p>
-                                <p><small>Posted on: {{ $review->created_at->format('d/m/Y') }}</small></p>
-                                <hr>
+                    <h3>Review Sách</h3>
+                    @if(auth()->check())
+                        <form action="{{ route('home.review', $book->book_id) }}" method="POST" role="form">
+                            @csrf
+                            <div class="row g-4">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" name="name" class="form-control" placeholder="Your Name *" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="email" name="email" class="form-control" placeholder="Your Email *" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="rating">Đánh giá (1-5 sao):</label>
+                                        <select name="rating" class="form-control" required>
+                                            <option value="1">1 Sao</option>
+                                            <option value="2">2 Sao</option>
+                                            <option value="3">3 Sao</option>
+                                            <option value="4">4 Sao</option>
+                                            <option value="5">5 Sao</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <textarea name="review" class="form-control" cols="30" rows="5" placeholder="Your Review *" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-success">Gửi Đánh Giá</button>
+                                </div>
                             </div>
-                        @empty
-                            <div class="alert alert-info">Hiện chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!</div>
-                        @endforelse
-                    </div>
+                        </form>
+                    @else
+                        <div class="alert alert-danger">
+                            <strong>Vui lòng đăng nhập để đánh giá sách.</strong> <a href="{{ route('account.login') }}">Đăng nhập</a>
+                        </div>
+                    @endif
+
+                    <h4>Đánh Giá Từ Độc Giả</h4>
+                    @forelse($book->reviews as $review)
+                        <div class="media mt-4">
+                            <div class="media-body">
+                                <h5>{{ $review->name }} 
+                                    <small>{{ $review->created_at->format('d/m/Y') }}</small>
+                                </h5>
+                                <p>⭐ {{ $review->rating }} Sao</p>
+                                <p>{{ $review->review }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p>Chưa có đánh giá nào cho cuốn sách này.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -173,15 +217,20 @@
 
         @forelse ($comments as $comm)
             <div class="media mt-4">
-                <img class="mr-3 rounded-circle" width="50" src="{{ $comm->avatar ?? 'path/to/default-avatar.jpg' }}" alt="{{$comm->user->name }}">
+                <img class="mr-3 rounded-circle" width="50" src="{{ $comm->user->avatar ?? 'path/to/default-avatar.jpg' }}" alt="{{$comm->user->name }}">
                 <div class="media-body">
-                    <h4 class="mt-0">{{ $comm->user->name }} <small>{{ optional($comm->created_at)->format('d/m/Y') }}</small></h4>
+                    <h4 class="mt-0">{{ $comm->user->name }} <small>{{ $comm->created_at }}</small></h4>
                     <p>{{ $comm->comment }}</p>
-                    @can('my-comment',$comm)
-                    <p class="text-right">
-                        <a href="" class="btn btn-primary btn-sm">Sửa</a>
-                        <a href="" class="btn btn-danger btn-sm">Xóa</a>
-                    </p>
+
+                    @can('update', $comm)
+                        <div class="text-right">
+                            <a href="{{ route('home.edit-comment', $comm->id) }}" class="btn btn-primary btn-sm">Sửa</a>
+                            <form action="{{ route('home.delete-comment', $comm->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                            </form>
+                        </div>
                     @endcan
                 </div>
             </div>
@@ -191,6 +240,7 @@
     </div>
 </section>
 
+
 <!-- Product Details Section End -->
 
 <!-- Related Product Section Begin -->
@@ -199,12 +249,12 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="section-title related__product__title">
-                    <h2>Related Product</h2>
+                    <h2>Sản Phẩm Liên Quan</h2>
                 </div>
             </div>
         </div>
         <div class="row">
-            @foreach($books as $item)
+            @forelse($relatedBooks as $item)
                 <div class="col-lg-4 col-md-6 col-sm-6">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" data-setbg="{{ asset($item->cover_image) }}">
@@ -213,7 +263,7 @@
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a href="#">{{ $item->title }}</a></h6>
+                            <h6><a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">{{ $item->title }}</a></h6>
                             <h5>
                                 @if ($item->sale_price && $item->sale_price > 0)
                                     <span style="text-decoration: line-through; color: gray;">{{ number_format($item->price) }} VNĐ</span>
@@ -225,10 +275,13 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-center">Không có sản phẩm liên quan nào.</p>
+            @endforelse
         </div>
     </div>
 </section>
+
 <!-- Related Product Section End -->
 
 @stop

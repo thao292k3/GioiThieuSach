@@ -10,7 +10,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,22 +38,36 @@ Route::group(['prefix' => ''], function () {
 
     Route::get('/blog/{id}', [HomeController::class, 'blogdetail'])->name('blogs.show');
 
+    Route::get('/shopingcart', [HomeController::class, 'shopingcart'])->name('shopingcart');
+
 
     // Route GET để hiển thị form liên hệ
     Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+    Route::post('/contact', [HomeController::class, 'storeContact']);
 
     // Route POST để xử lý gửi email
     Route::post('/contact', [HomeController::class, 'senMail'])->name('sendMail');
 
     Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
     Route::get('/blogdetail/{id}', [HomeController::class, 'blogdetail'])->name('blogdetail');
+    // Like bài viết
+    Route::post('/blog/{blog_id}/like', [HomeController::class, 'likeBlog'])->name('blog.like');
+
+    // Bình luận
+    Route::post('/blog/{blog_id}/comment', [HomeController::class, 'post_comment'])->name('blog.comment');
+
+    // Phản hồi bình luận
+    Route::post('/comment/{comment_id}/reply', [HomeController::class, 'replyComment'])->name('comment.reply');
+
 
     Route::get('/category/{cat}', [HomeController::class, 'category'])->name('category');
 
     Route::post('/contact', [HomeController::class, 'store'])->name('contact.store');
     Route::get('/books/category/{category_id}', [HomeController::class, 'filterByCategory'])->name('books.filterByCategory');
     Route::post('/comment/{book_id}', [HomeController::class, 'post_comment'])->name('home.comment');
+    Route::post('/review/{book_id}', [HomeController::class, 'store'])->name('home.review');
     Route::get('/shopdetail/{slug?}', [HomeController::class, 'shopdetail'])->name('shopdetail');
+    Route::get('/favorite/{book}', [HomeController::class, 'favorite'])->name('home.favorite');
 });
 
 
@@ -71,12 +88,33 @@ Route::group(['prefix' => 'web', 'middleware'], function () {
 
     // Resource routes for Contact
     Route::resource('contact', ContactController::class);
+    // // Route::get('/contacts', [ContactController::class, 'index'])->name('contact.index');
+    // // Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
+    // // Route::get('/admin/contacts', [ContactController::class, 'index'])->name('contacts.index');
+    // // Route::post('/admin/contacts/{id}/reply', [ContactController::class, 'reply'])->name('contact.reply');
+    // Route::get('contact/{id}/reply', [ContactController::class, 'showReplyForm'])->name('contact.reply');
+    // Route::post('contact/{id}/reply', [ContactController::class, 'sendReply'])->name('contact.sendReply');
+    // Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
+
+
+    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+    Route::post('/reply', [ContactController::class, 'reply'])->name('contact.reply');
+    Route::post('/edit-response', [ContactController::class, 'editResponse'])->name('contact.editResponse');
+
+
 
     // Resource routes for User
     Route::resource('user', UserController::class);
 
     // Resource routes for Blog
     Route::resource('blog', BlogController::class);
+
+
+    Route::resource('comment', CommentController::class);
+    Route::post('/approve/{id}', [CommentController::class, 'approve'])->name('comment.approve');
+
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
 
@@ -87,6 +125,7 @@ Route::group(['prefix' => 'account'], function () {
     Route::get('/login', [AccountController::class, 'login'])->name('account.login');
     Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
     Route::post('/login', [AccountController::class, 'post_login'])->name('account.login.post');
+    Route::get('/favorite', [AccountController::class, 'favorite'])->name('account.favorite');
 
     Route::get('/register', [AccountController::class, 'register'])->name('account.register');
     Route::post('/register', [AccountController::class, 'post_register']);
@@ -101,4 +140,17 @@ Route::post('/upload-image', function (Request $request) {
         'uploaded' => 1,
         'fileName' => $imageName
     ]);
+});
+Route::group(['prefix' => 'cart', 'middleware' => ['auth']], function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/add/{book}', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/delete/{book}', [CartController::class, 'delete'])->name('cart.delete');
+    Route::get('/update/{book}', [CartController::class, 'update'])->name('cart.update');
+    Route::get('/clear', [CartController::class, 'clear'])->name('cart.clear');
+});
+
+Route::group(['prefix' => 'order', 'middleware' => ['auth']], function () {
+    Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('order.checkout');
+    Route::post('/checkout', [CheckoutController::class, 'post_checkout']);
+    Route::get('/verify/{token}', [CheckoutController::class, 'verify'])->name('order.verify');
 });

@@ -20,7 +20,6 @@
                             {{ session('No') }}
                         </div>
                     @endif
-
                     <form method="POST" action="{{ route('account.register') }}">
                         @csrf
                         <div class="form-group">
@@ -54,6 +53,19 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="form-group">
+                            <label for="role">Vai trò</label>
+                            <select name="role" id="role" class="form-control" required>
+                                <option value="1" {{ old('role') == '1' ? 'selected' : '' }}>Người dùng</option>
+                                <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>Quản trị viên</option>
+                            </select>
+                            @error('role')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        
                     
                         <button type="submit" class="btn btn-primary">Đăng ký</button>
                     </form>

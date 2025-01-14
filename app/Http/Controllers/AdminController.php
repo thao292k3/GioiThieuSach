@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Blog;
+use App\Models\Book;
+use App\Models\Comment;
+use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -31,7 +35,13 @@ class AdminController extends Controller
 
     public function index()
     {
-        return view('admin.index'); // Trả về view admin.index
+        $bookCount = Book::count();
+        $blogCount = Blog::count();
+        $userCount = User::count();
+        $contactCount = Contact::count();
+        $commentCount = Comment::count();
+
+        return view('admin.index', compact('bookCount', 'blogCount', 'userCount', 'contactCount', 'commentCount'));
     }
 
     public function logout()

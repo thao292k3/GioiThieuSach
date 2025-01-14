@@ -3,7 +3,12 @@
 @section('body')
 
 <!-- Hiển thị thông báo thành công -->
-@if (session('success'))
+
+
+<!-- Form Thêm Mới Sách -->
+<div class="container">
+
+    @if (session('success'))
 <div class="alert alert-success">
     {{ session('success') }}
 </div>
@@ -15,9 +20,6 @@
     {{ session('error') }}
 </div>
 @endif
-
-<!-- Form Thêm Mới Sách -->
-<div class="container">
     <div class="row-4">
         
         <div class="col-12">

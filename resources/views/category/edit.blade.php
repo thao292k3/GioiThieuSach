@@ -10,7 +10,7 @@
             <div class="pd-20 card-box mb-30">
                 <div class="clearfix">
                     <div class="pull-left">
-                        <h4 class="text-blue h4">Sửa Thể Loại Sách</h4>
+                        <h4 class="text-blue h4">Cập nhật damh mục sách</h4>
                         <p class="mb-30">Vui lòng điền thông tin chi tiết bên dưới</p>
                     </div>
                 </div>
@@ -18,7 +18,7 @@
                 <form method="POST" action="{{ route('category.update', $category->category_id) }}">
                     @csrf
                     @method('PUT')
-
+                    <input type="hidden" name="category_id" value="{{$category->category_id}}">
                     <!-- Tên Thể Loại -->
                     <div class="form-group">
                         <label for="name">Tên Thể Loại</label>
@@ -28,12 +28,27 @@
                         @enderror
                     </div>
 
+                    <div class="form-group">
+                        <label for="parent_id">Danh mục cha</label>
+                        <select class="form-control" id="parent_id" name="parent_id">
+                            <option value="">Chọn danh mục cha</option>
+                            @foreach($data as $model)
+                                <option 
+                                    value="{{ $model->category_id }}" 
+                                    {{ isset($category->parent_id) && $category->parent_id == $model->category_id ? 'selected' : '' }}>
+                                    {{ $model->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+
                     <!-- Trạng Thái -->
                     <div class="form-group">
                         <label for="status">Trạng Thái</label>
                         <select class="form-control" name="status" id="status">
-                            <option value="1" {{ old('status', $category->status ?? '') == '1' ? 'selected' : '' }}>Hiển Thị</option>
-                            <option value="0" {{ old('status', $category->status ?? '') == '0' ? 'selected' : '' }}>Ẩn</option>
+                            <option value="0" {{ old('status', $category->status ?? '') == '0' ? 'selected' : '' }}>Hiển Thị</option>
+                            <option value="1" {{ old('status', $category->status ?? '') == '1' ? 'selected' : '' }}>Ẩn</option>
                         </select>
                     </div>
 

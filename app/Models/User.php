@@ -10,6 +10,17 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    public function favorites()
+    {
+        // return $this->hasMany(Favorite::class, 'favorites', 'user_id', 'book_id');
+        return $this->hasMany(Favorite::class, 'user_id', 'user_id');
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'user_id', 'user_id');
+    }
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**

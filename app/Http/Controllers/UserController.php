@@ -58,7 +58,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $data = User::findOrFail($id);
-        return view('user.edit', compact('user'));
+        return view('user.edit', compact('data'));
     }
 
     // Cập nhật thông tin người dùng
@@ -69,7 +69,7 @@ class UserController extends Controller
             'phone' => 'nullable|numeric',
             'address' => 'nullable|string|max:50',
             'birthday' => 'nullable|date',
-            'email' => 'required|email|max:200|unique:users,email,' . $id,
+            'email' => 'required|email|max:200|unique:users,email,' . $id . ',id',
             'password' => 'nullable|string|min:8',
         ]);
 
@@ -83,7 +83,7 @@ class UserController extends Controller
             'password' => $request->password ? Hash::make($request->password) : $data->password,
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('success', 'Cập nhật thành công!');
     }
 
     // Xóa người dùng

@@ -115,10 +115,10 @@
                             <div class="select-role">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-outline-primary">
-                                        <input type="radio" name="role" value="1" required> Manager
+                                        <input type="radio" name="role" value="0" required> Manager
                                     </label>
                                     <label class="btn btn-outline-primary">
-                                        <input type="radio" name="role" value="0" required> Employee
+                                        <input type="radio" name="role" value="1" required> Employee
                                     </label>
                                 </div>
                             </div>

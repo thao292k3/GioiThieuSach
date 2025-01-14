@@ -101,7 +101,7 @@
         </div>
     @endif
     
-    <form action="" method="post">
+    <form action="{{url('/contact') }}" method="post" novalidate="novalidate">
         @csrf
         <label for="name">Tên:</label>
         <input type="text" name="name" id="name" required>

@@ -23,6 +23,12 @@ class AccountController extends Controller
         return view('site.account.login');
     }
 
+    public function favorite()
+    {
+        $favorites = auth()->user()->favorites;
+        return view('site.account.favorite', compact('favorites'));
+    }
+
     public function post_login(Request $request)
     {
         $request->validate([
@@ -64,22 +70,24 @@ class AccountController extends Controller
             'name' => 'required|string|max:255', // Kiểm tra tên người dùng
             'password' => 'required|confirmed|min:6', // Kiểm tra mật khẩu và xác nhận mật khẩu
             'password_confirmation' => 'required|same:password', // Kiểm tra mật khẩu xác nhận trùng với mật khẩu
-            'phone' => 'nullable|string|max:20', // Số điện thoại là tùy chọn
-            'address' => 'nullable|string|max:255', // Địa chỉ là tùy chọn
-            'birthDate' => 'nullable|date', // Ngày sinh là tùy chọn
-            'gender' => 'nullable|in:Male,Female,Other', // Giới tính là tùy chọn
+
         ];
 
         // Xác thực dữ liệu từ người dùng
-        $request->validate($rules);
+        $request->validate([
+            'role' => 'required|in:0,1', // Chỉ chấp nhận 0 (Admin) hoặc 1 (User)
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'password' => 'required|confirmed|min:6',
+        ]);
 
         // Lấy dữ liệu cần thiết từ form đăng ký
         $data = $request->only(['name', 'email', 'phone', 'address', 'birthDate', 'gender']);
         // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+        $data = $request->only(['name', 'email', 'role']);
         $data['password'] = bcrypt($request->password);
-
         // Tạo khách hàng mới và lưu vào cơ sở dữ liệu
-        if (Customer::create($data)) {
+        if (User::create($data)) {
             // Sau khi đăng ký thành công, chuyển hướng về trang đăng nhập và hiển thị thông báo
             return redirect()->route('account.login')->with('yes', 'Đăng ký thành công');
         }

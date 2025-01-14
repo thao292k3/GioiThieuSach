@@ -51,6 +51,11 @@ return [
             'driver' => 'session',
             'provider' => 'admins', // Bạn có thể tạo provider riêng cho quản trị viên
         ],
+
+        'cus' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
