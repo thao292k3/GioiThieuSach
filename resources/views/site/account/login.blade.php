@@ -44,7 +44,7 @@
             </div>
             <div class="login-menu">
                 <ul>
-                    <li><a href="">Register</a></li>
+                    <li><a href="{{ route('account.register') }}">Register</a></li>
                 </ul>
             </div>
         </div>
@@ -62,92 +62,75 @@
                         </div>
 
                         <!-- Form đăng nhập -->
-                        <form method="POST" action="" enctype="multipart/form-data">
+                        <form form method="POST" action="{{ route('account.login.post') }}" enctype="multipart/form-data">
+                      
                             @csrf
 
                             @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                            @endif
-                            <?php
-                            $message = session()->get('message');
-                            if ($message) {
-                                echo '<h5 class="text-alert"> ' . $message . ' </h5>';
-                                session()->put('message', null);
-                            }
-                            ?>
-
-                            <!-- Thêm các trường mới -->
-                           <!-- <div class="input-group custom">
-                                <input type="text" name="id" class="form-control form-control-lg" placeholder="ID">
-                                @error('id')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="icon-copy dw dw-id-card"></i></span>
-                                </div>
-                            </div> -->
-
-                        
-                            <div class="input-group custom">
-                                <input type="email" name="email" class="form-control form-control-lg" placeholder="Email" required>
-                                @if ($errors->has('email'))
                                 <div class="alert alert-danger">
-                                    {{ $errors->first('email') }}
+                                    {{ session('error') }}
                                 </div>
                             @endif
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="icon-copy dw dw-email"></i></span>
-                                </div>
-                            </div>
-                            
-                            <div class="input-group custom">
-                                <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" required>
-                                @error('password')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="dw dw-padlock1"></i></span>
-                                </div>
-                            </div>
-                            
-                            <div class="select-role">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-outline-primary">
-                                        <input type="radio" name="role" value="0" required> Manager
-                                    </label>
-                                    <label class="btn btn-outline-primary">
-                                        <input type="radio" name="role" value="1" required> Employee
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            
 
-                            <div class="row pb-30">
-                                <div class="col-6">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                        <label class="custom-control-label" for="customCheck1">Remember</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="forgot-password"><a href="forgot-password.html">Forgot Password</a></div>
-                                </div>
+                            @if (session('message'))
+                                <h5 class="text-alert">{{ session('message') }}</h5>
+                            @endif
+
+                        <div class="input-group custom">
+                            <input type="email" name="email" class="form-control form-control-lg" placeholder="Email" required>
+                            @error('email')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                            <div class="input-group-append custom">
+                                <span class="input-group-text"><i class="icon-copy dw dw-email"></i></span>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="input-group mb-0">
-                                        <input class="btn btn-primary btn-lg btn-block" type="submit" value="Sign In">
-                                    </div>
-                                    <div class="font-16 weight-600 pt-10 pb-10 text-center" data-color="#707373">OR</div>
-                                    <div class="input-group mb-0">
-                                        <a class="btn btn-outline-primary btn-lg btn-block" href="">Register To Create Account</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+
+    <div class="input-group custom">
+        <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" required>
+        @error('password')
+            <div class="alert alert-danger">{{ $message }}</div>
+        @enderror
+        <div class="input-group-append custom">
+            <span class="input-group-text"><i class="dw dw-padlock1"></i></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+                    <label for="role">Quyền</label>
+                    <select name="role" id="role" class="form-control" required>
+                        <option value="1">Người dùng</option>
+                        <option value="0">Quản trị viên</option>
+                    </select>
+                    @error('role')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+    <div class="row pb-30">
+        <div class="col-6">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" name="remember" class="custom-control-input" id="customCheck1">
+                <label class="custom-control-label" for="customCheck1">Remember</label>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="forgot-password"><a href="">Forgot Password</a></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="input-group mb-0">
+                <input class="btn btn-primary btn-lg btn-block" type="submit" value="Sign In">
+            </div>
+            <div class="font-16 weight-600 pt-10 pb-10 text-center" data-color="#707373">OR</div>
+            <div class="input-group mb-0">
+                <a class="btn btn-outline-primary btn-lg btn-block" href="{{ route('account.register')}}">Register To Create Account</a>
+            </div>
+        </div>
+    </div>
+</form>
                         <!-- Kết thúc form -->
                     </div>
                 </div>

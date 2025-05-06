@@ -16,6 +16,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FavoriteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,8 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => ''], function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+     Route::get('/', [HomeController::class, 'index'])->name('home');
+    // Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
     Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 
     Route::get('/blog/{id}', [HomeController::class, 'blogdetail'])->name('blogs.show');
@@ -49,6 +51,8 @@ Route::group(['prefix' => ''], function () {
     Route::post('/contact', [HomeController::class, 'senMail'])->name('sendMail');
 
     Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
+    Route::get('/shopdetail/{slug?}', [HomeController::class, 'shopdetail'])->name('shopdetail');
+    
     Route::get('/blogdetail/{id}', [HomeController::class, 'blogdetail'])->name('blogdetail');
     // Like bài viết
     Route::post('/blog/{blog_id}/like', [HomeController::class, 'likeBlog'])->name('blog.like');
@@ -66,8 +70,10 @@ Route::group(['prefix' => ''], function () {
     Route::get('/books/category/{category_id}', [HomeController::class, 'filterByCategory'])->name('books.filterByCategory');
     Route::post('/comment/{book_id}', [HomeController::class, 'post_comment'])->name('home.comment');
     Route::post('/review/{book_id}', [HomeController::class, 'store'])->name('home.review');
-    Route::get('/shopdetail/{slug?}', [HomeController::class, 'shopdetail'])->name('shopdetail');
+    
     Route::get('/favorite/{book}', [HomeController::class, 'favorite'])->name('home.favorite');
+
+    Route::get('/mail', [HomeController::class, 'mail'])->name('home.mail');
 });
 
 
@@ -124,11 +130,10 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::get('/login', [AccountController::class, 'login'])->name('account.login');
     Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
+    Route::get('/register', [AccountController::class, 'register'])->name('account.register');
+    Route::post('/register', [AccountController::class, 'post_register'])->name('account.register.post');
     Route::post('/login', [AccountController::class, 'post_login'])->name('account.login.post');
     Route::get('/favorite', [AccountController::class, 'favorite'])->name('account.favorite');
-
-    Route::get('/register', [AccountController::class, 'register'])->name('account.register');
-    Route::post('/register', [AccountController::class, 'post_register']);
 });
 
 Route::post('/upload-image', function (Request $request) {
@@ -147,10 +152,41 @@ Route::group(['prefix' => 'cart', 'middleware' => ['auth']], function () {
     Route::get('/delete/{book}', [CartController::class, 'delete'])->name('cart.delete');
     Route::get('/update/{book}', [CartController::class, 'update'])->name('cart.update');
     Route::get('/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 });
 
 Route::group(['prefix' => 'order', 'middleware' => ['auth']], function () {
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('order.checkout');
-    Route::post('/checkout', [CheckoutController::class, 'post_checkout']);
-    Route::get('/verify/{token}', [CheckoutController::class, 'verify'])->name('order.verify');
+    
+    Route::post('/checkout', [CheckoutController::class, 'post_checkout'])->name('checkout.post');
+    Route::get('/checkout/verify/{token}', [CheckoutController::class, 'verify'])->name('order.verify');
 });
+
+Route::get('/test-email', function () {
+    try {
+        Mail::raw('Test email', function ($message) {
+            $message->to('your_email@example.com')->subject('Test Email');
+        });
+        return 'Email sent successfully!';
+    } catch (\Exception $e) {
+        return 'Failed to send email: ' . $e->getMessage();
+    }
+});
+
+Route::get('/checkout/success', function () {
+    return view('site.checkout_success');
+})->name('checkout.success');
+
+Route::get('/search', [BookController::class, 'search'])->name('book.search');
+
+Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('order.checkout');
+Route::get('/checkout/verify/{token}', [CheckoutController::class, 'verify'])->name('order.verify');
+Route::get('/checkout/verify', [CheckoutController::class, 'verify'])->name('order.verify');
+
+Route::post('/checkout', [CheckoutController::class, 'post_checkout'])->name('checkout.post');
+Route::get('/checkout/success', function () {
+    return view('site.checkout_success');
+})->name('checkout.success');
+
+

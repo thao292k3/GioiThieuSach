@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('book.store') }}" enctype="multipart/form-data">
+                <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <!-- Tên Sách -->
                     <div class="form-group">
@@ -41,6 +41,22 @@
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
+
+                    <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input class="form-control" type="text" name="slug" id="slug" placeholder="Nhập slug">
+                        @error('slug')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <!-- <script>
+                        document.getElementById('title').addEventListener('input', function () {
+                            const title = this.value;
+                            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                            document.getElementById('slug').value = slug;
+                        });
+                    </script> -->
 
                     <!-- Tác Giả -->
                     <div class="form-group">
@@ -115,11 +131,18 @@
                         @enderror
                     </div>
 
+                    
                         <!-- Ảnh Bìa -->
+                       
                         <div class="form-group">
-                            <label for="cover_image">Ảnh Bìa</label>
-                            <input type="file" name="cover_image" id="cover_image" class="form-control-file">
-                        </div>
+                            <label for="cover_image">Cover Image</label>
+                            <input type="file" name="cover_image" id="cover_image" class="form-control" required>
+                        @error('cover_image')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                            </div>
+                            
+                        
 
                         <!-- Mô Tả -->
                         <div class="form-group">
@@ -129,10 +152,15 @@
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="stock">Sản phẩm nổi bật</label>
                             <input type="checkbox" name="stock" id="stock" value="1">
-                        </div>
+                        </div> -->
+
+                        <select name="stock" id="stock" class="form-control">
+                            <option value="1" selected>Nổi bật</option>
+                            <option value="0">Không nổi bật</option>
+                        </select>
 
                         <div class="form-group">
                             <label for="image">File FDF</label>

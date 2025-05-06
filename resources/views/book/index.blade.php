@@ -49,9 +49,11 @@
                             <tr>
                                 <td>{{ $book->book_id }}</td>
                                 <td>{{ $book->title }}</td>
+                                <!-- <td>{{ $book->slug }}</td> -->
                                 <td>{{ $book->author }}</td>
                                 <td>{{ $book->publisher }}</td>
                                 <td>{{ $book->isbn }}</td>
+                                
                                 <td>
                                     <div class="dropdown">
                                         <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">

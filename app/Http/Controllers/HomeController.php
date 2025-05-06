@@ -83,7 +83,7 @@ class HomeController extends Controller
 
         // Lấy danh sách các thể loại duy nhất của sách nổi bật
         $categories = $featuredBooks->map(function ($item) {
-            return $item->category->name; // Lấy tên thể loại của mỗi sản phẩm
+            return optional($item->category)->name; // Lấy tên thể loại của mỗi sản phẩm
         })->unique(); // Lọc các thể loại duy nhất
 
         return view('site.index', compact('categories', 'featuredBooks'));
@@ -211,27 +211,6 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
-        // if (!auth()->check()) {
-        //     return redirect()->route('account.login')->with('error', 'Vui lòng đăng nhập để bình luận hoặc đánh giá.');
-        // }
-
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'email' => 'required|email',
-        //     'review' => 'required|string',
-        //     'rating' => 'required|integer|min:1|max:5',
-        // ]);
-
-        // Review::create([
-        //     'book_id' => $book_id,
-        //     'user_id' => auth()->id(), // Dùng user_id
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'review' => $request->review,
-        //     'rating' => $request->rating,
-        // ]);
-
-        // return redirect()->back()->with('success', 'Cảm ơn bạn đã đánh giá cuốn sách!');
 
         if ($request->has('message') && !$request->has('rating')) {
             // Xử lý lưu liên hệ
@@ -241,15 +220,7 @@ class HomeController extends Controller
                 'message' => 'required|string',
             ]);
 
-            // Contact::create([
-            //     'name' => $request->name,
-            //     'email' => $request->email,
-            //     'message' => $request->message,
-            //     // 'status' => '1', // Gán giá trị mặc định
-            // ]);
-
-
-            // return redirect()->route('contact')->with('success', 'Cảm ơn bạn đã liên hệ!');
+            
         } elseif ($request->has('rating')) {
             // Xử lý lưu đánh giá
             $request->validate([
@@ -447,5 +418,13 @@ class HomeController extends Controller
             ]);
             return redirect()->back()->with('success', 'Bạn đã yêu thích sản phẩm!');
         }
+    }
+
+    public function mail()
+    {
+        $email = 'pp6686336@gmail.com';
+        Mail::to($email)->send(new ContactEmail());
+        //
+     return view('home.mail');
     }
 }

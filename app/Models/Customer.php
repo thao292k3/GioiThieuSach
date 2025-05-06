@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-    protected $table = 'customers';
-    protected $fillable = ['name', 'email', 'password', 'phone', 'address', 'birthDate', 'gender'];
+    // use HasApiTokens, HasFactory, Notifiable;
+    // protected $table = 'customers';
+    // protected $fillable = ['name', 'email', 'password', 'phone', 'address', 'birthDate', 'gender'];
 }

@@ -40,6 +40,14 @@
                     @enderror
                 </div>
 
+                <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input class="form-control" type="text" name="slug" id="slug" placeholder="Nhập slug">
+                        @error('slug')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+
                 <!-- Tác Giả -->
                 <div class="form-group">
                     <label for="author">Tác Giả</label>

@@ -12,20 +12,23 @@ class Book extends Model
     public $appenends = ['favorited'];
     protected $table = 'books';
     protected $primaryKey = 'book_id';
+    public $incrementing = true; // Nếu khóa chính là số tự tăng
+    protected $keyType = 'int'; // Kiểu dữ liệu của khóa chính
     protected $fillable = [
         'title',
+        'slug',
         'author',
         'publisher',
         'published_date',
         'isbn',
         'price',
-        'sale_price',
         'description',
-        'status',
-        'category_id',
         'cover_image',
         'pdf_file',
+        'status',
+        'category_id',
         'stock',
+        'sale_price',
     ];
     public function cat()
     {
@@ -57,5 +60,10 @@ class Book extends Model
     {
         $favorited = Favorite::where(['book_id' => $this->book_id, 'user_id' => Auth::user()->user_id])->first();
         return $favorited ? true : false;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
     }
 }

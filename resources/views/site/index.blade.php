@@ -81,12 +81,12 @@
             <div class="col-lg-9">
                 <div class="hero__search">
                     <div class="hero__search__form">
-                        <form action="#">
+                        <form action="{{ route('book.search') }}" method="GET">
                             <div class="hero__search__categories">
                                 All Categories
                                 <span class="arrow_carrot-down"></span>
                             </div>
-                            <input type="text" placeholder="What do yo u need?">
+                            <input type="text" name="keyword" placeholder="Nhập tên sách, tác giả hoặc thể loại...">
                             <button type="submit" class="site-btn">SEARCH</button>
                         </form>
                     </div>
@@ -148,67 +148,74 @@
         </div>
         <div class="row featured__filter">
             @if(isset($featuredBooks) && $featuredBooks->isNotEmpty())
-                @foreach($featuredBooks as $item)
-                <div class="col-lg-3 col-md-4 col-sm-6 mix {{ strtolower(str_replace(' ', '-', $item->cat->name)) }}">
-                    <div class="featured__item">
-                        <div class="featured__item__pic set-bg" data-setbg="{{ asset($item->cover_image) }}">
-						   <ul class="featured__item__pic__hover">
+            @foreach($featuredBooks as $item)
+            <div class="col-lg-3 col-md-4 col-sm-6 mix {{ strtolower(str_replace(' ', '-', $item->cat->name)) }}">
+                <div class="featured__item">
+                <div class="featured__item__pic set-bg" data-setbg="{{ asset($item->cover_image) }}">
+                               <ul class="featured__item__pic__hover">
 
-                            <ul class="featured__item__pic__hover">
-                                <li>
-                                    @if(auth()->check())
-                                        @if(auth()->user()->favorites()->where('favorites.book_id', $item->book_id)->exists()) 
-                                            <a title="Bỏ thích" onclick="return confirm('Bạn có muốn bỏ thích không?')" href="{{ route('home.favorite', $item->book_id) }}">
-                                                <i class="fas fa-heart" style="color: red;"></i>
-                                            </a>
-                                        @else
-                                            <a title="Yêu thích" href="{{ route('home.favorite', $item->book_id) }}">
-                                                <i class="far fa-heart"></i>
-                                            </a>
-                                        @endif
-                                    @else
-                                        <a title="Yêu thích" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để yêu thích sách!');">
-                                            <i class="far fa-heart"></i>
-                                        </a>
-                                    @endif
-                                </li>
-                                
-                                <li>
-                                    @if(auth()->check())
-                                        <a title="Thêm vào giỏ hàng" href="{{ route('cart.add', $item->book_id) }}">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    @else
-                                        <a title="Thêm vào giỏ hàng" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để thêm sách vào giỏ hàng!');">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    @endif
-                                </li>
-                                
-                                
-                                <li>
-                                    <a href="#"><i class="fa fa-retweet"></i></a>
-                                </li>
-                            </ul> 
-                            </ul>
-                        
-                            <ul class="featured__item__pic__hover">
-                                <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">Xem chi tiết</a>
-                            </ul>
-                        </div>    
-                    </div>
-                        {{-- @endif --}}
-
-                        <div class="featured__item__text">
-                            <p>{{ $item->cat->name }}</p>
-                            <h6>{{ $item->title }}</h6>
-                            <h5>{{ $item->price }}</h5>
-                        </div>
-                </div>
+                    <ul class="featured__item__pic__hover">
+                    <li>
+                        @if(auth()->check())
+                        @if(auth()->user()->favorites()->where('favorites.book_id', $item->book_id)->exists()) 
+                            <a title="Bỏ thích" onclick="return confirm('Bạn có muốn bỏ thích không?')" href="{{ route('home.favorite', $item->book_id) }}">
+                            <i class="fas fa-heart" style="color: red;"></i>
+                            </a>
+                        @else
+                            <a title="Yêu thích" href="{{ route('home.favorite', $item->book_id) }}">
+                            <i class="far fa-heart"></i>
+                            </a>
+                        @endif
+                        @else
+                        <a title="Yêu thích" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để yêu thích sách!');">
+                            <i class="far fa-heart"></i>
+                        </a>
+                        @endif
+                    </li>
+                    
+                    <li>
+                        @if(auth()->check())
+                        <a title="Thêm vào giỏ hàng" href="{{ route('cart.add', $item->book_id) }}">
+                            <i class="fa fa-shopping-cart"></i>
+                        </a>
+                        @else
+                        <a title="Thêm vào giỏ hàng" href="{{ route('account.login') }}" onclick="alert('Vui lòng đăng nhập để thêm sách vào giỏ hàng!');">
+                            <i class="fa fa-shopping-cart"></i>
+                        </a>
+                        @endif
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="#"><i class="fa fa-retweet"></i></a>
+                    </li>
+                    </ul> 
+                    </ul>
                 
+                    <ul class="featured__item__pic__hover">
+                    @if(!empty($item->slug))
+                        <a href="{{ route('shopdetail', ['slug' => $item->slug]) }}">Xem chi tiết</a>
+                    @else
+                        <p>Không có thông tin chi tiết.</p>
+                    
+                    
+                    
+                        @endif
+                    </ul>
+                </div>    
+                </div>
+                {{-- @endif --}}
+
+                <div class="featured__item__text">
+                    <p>{{ $item->cat->name }}</p>
+                    <h6>{{ $item->title }}</h6>
+                    <h5>{{ $item->price }}</h5>
+                </div>
+            </div>
+            
             @endforeach
             @else
-                <p>Không có sách nổi bật.</p>
+            <p>Không có sách nổi bật.</p>
             @endif
         </div>
     </div>

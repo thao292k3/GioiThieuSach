@@ -19,6 +19,6 @@ class OrderDetails extends Model
     public function book()
 
     {
-        return $this->belongsTo(Book::class, 'book_id', 'book_id');
+        return $this->hasOne(Book::class, 'book_id', 'book_id');
     }
 }

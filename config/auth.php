@@ -52,10 +52,10 @@ return [
             'provider' => 'admins', // Bạn có thể tạo provider riêng cho quản trị viên
         ],
 
-        'cus' => [
-            'driver' => 'session',
-            'provider' => 'customers',
-        ],
+        // 'cus' => [
+        //     'driver' => 'session',
+        //     'provider' => 'customers',
+        // ],
     ],
 
     /*
@@ -82,10 +82,10 @@ return [
         ],
 
 
-        'customers' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Customer::class,
-        ],
+        // 'customers' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\Customer::class,
+        // ],
 
         'admins' => [
             'driver' => 'eloquent',

@@ -1,6 +1,6 @@
 @extends('site.master')
 
-@section('title', 'Trang Gio Hang ')
+@section('title', 'Trang Giỏ Hàng')
 
 @section('body')
 
@@ -37,7 +37,7 @@
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" placeholder="What do yo u need?">
+                                <input type="text" placeholder="What do you need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
                         </div>
@@ -63,7 +63,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                        <h2>Order Checkout </h2>
+                        <h2>Order Checkout</h2>
                         <div class="breadcrumb__option">
                             <a href="./index.html">Home</a>
                             <span>Order Checkout</span>
@@ -80,11 +80,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <form action="" method="post">
+                    <form action="{{ route('checkout.post') }}" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="name">Tên</label>
-                            <input type="text" value="{{$auth->name}}" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                            <input type="text" value="{{ $auth->name ?? old('name') }}" name="name" id="name" class="form-control" required>
                             @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -92,7 +92,7 @@
                     
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email"value="{{$auth->email}}"  name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                            <input type="email" value="{{ $auth->email ?? old('email') }}" name="email" id="email" class="form-control" required>
                             @error('email')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -100,7 +100,7 @@
                     
                         <div class="form-group">
                             <label for="phone">Số điện thoại</label>
-                            <input type="tel" value="{{$auth->phone}}" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" required>
+                            <input type="tel" value="{{ $auth->phone ?? old('phone') }}" name="phone" id="phone" class="form-control" required>
                             @error('phone')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -108,7 +108,7 @@
                     
                         <div class="form-group">
                             <label for="address">Địa chỉ</label>
-                            <input type="text" value="{{$auth->address}}" name="address" id="address" class="form-control" value="{{ old('address') }}" required>
+                            <input type="text" value="{{ $auth->address ?? old('address') }}" name="address" id="address" class="form-control" required>
                             @error('address')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -116,48 +116,48 @@
                     
                         <button type="submit" class="btn btn-primary btn-lg btn-block">Đặt hàng</button>
                     </form>
-                    
                 </div>
                 <div class="col-md-8">
                     <div class="shoping__cart__table">
                         <table>
                             <thead>
                                 <tr>
-                                    <th >ID</th>
+                                    <th>ID</th>
                                     <th class="shoping__product">Products</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Image</th>
-                                    <th></th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($carts as $item)
+                                @forelse ($carts as $item)
                                     <tr>
                                         <td scope="row">{{ $loop->iteration }}</td>
                                         <td>{{ $item->prod->title }}</td>
                                         <td>{{ number_format($item->price, 2) }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>     
+                                        <td>
                                             <img src="{{ asset('storage/uploads/' . $item->prod->cover_image) }}" width="40" alt="{{ $item->prod->title }}">
                                         </td>
                                         
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center">Your cart is empty.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
-                            
-                            
                         </table>
 
                         <br>
-                      <div class="text-center">
-                        <a href="" class="btn btn-primary">CONTINUE SHOPPING</a>
-                        @if($carts->count() )
-                            <a href="{{route('cart.clear')}}" class="btn btn-danger"> <i class="fa fa-trash"></i> CLEAR SHOPPING</a>
-                            <a href="#" class="btn btn-success">PLACE ORSDER</a>
-                        @endif
-
-                      </div>
+                        <div class="text-center">
+                            <a href="{{ route('shop') }}" class="btn btn-primary">CONTINUE SHOPPING</a>
+                            @if($carts->count())
+                                <a href="{{ route('cart.clear') }}" class="btn btn-danger"><i class="fa fa-trash"></i> CLEAR SHOPPING</a>
+                                <a href="{{ route('order.verify', ['token' => $auth->token ?? 'default-token']) }}" class="btn btn-success">PLACE ORDER</a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

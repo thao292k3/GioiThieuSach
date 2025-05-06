@@ -9,6 +9,7 @@
 
                 <p><strong>ID Sách:</strong> {{ $book->book_id }}</p>
                 <p><strong>Tên Sách:</strong> {{ $book->title }}</p>
+                <p><strong>Slug:</strong> {{ $book->slug }}</p>
                 <p><strong>Tác Giả:</strong> {{ $book->author }}</p>
                 <p><strong>Nhà Xuất Bản:</strong> {{ $book->publisher }}</p>
                 <p><strong>Ngày Xuất Bản:</strong> {{ $book->published_date }}</p>
